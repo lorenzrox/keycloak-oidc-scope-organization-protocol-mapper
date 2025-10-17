@@ -124,7 +124,7 @@ public class OIDCScopeOrganizationProtocolMapper extends AbstractOIDCProtocolMap
                 } else {
                     Map<String, List<String>> attributes = organization.getAttributes();
                     List<String> values = attributes.get(attribute);
-                    if (values != null && values.size() > 0) {
+                    if (!(values == null || values.isEmpty())) {
                         return values.get(0);
                     }
                 }
@@ -132,29 +132,5 @@ public class OIDCScopeOrganizationProtocolMapper extends AbstractOIDCProtocolMap
         }
 
         return null;
-    }
-
-    public static ProtocolMapperModel createClaimMapper(String name,
-            String tokenClaimName,
-            boolean consentRequired, String consentText,
-            boolean accessToken, boolean idToken) {
-        ProtocolMapperModel mapper = new ProtocolMapperModel();
-        mapper.setName(name);
-        mapper.setProtocolMapper(PROVIDER_ID);
-        mapper.setProtocol(OIDCLoginProtocol.LOGIN_PROTOCOL);
-
-        Map<String, String> config = new HashMap<String, String>();
-        config.put(OIDCAttributeMapperHelper.TOKEN_CLAIM_NAME, tokenClaimName);
-
-        if (accessToken) {
-            config.put(OIDCAttributeMapperHelper.INCLUDE_IN_ACCESS_TOKEN, "true");
-        }
-
-        if (idToken) {
-            config.put(OIDCAttributeMapperHelper.INCLUDE_IN_ID_TOKEN, "true");
-        }
-
-        mapper.setConfig(config);
-        return mapper;
     }
 }
