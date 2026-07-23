@@ -1,7 +1,6 @@
 package org.keycloak.protocol.oidc.mappers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.keycloak.models.ClientSessionContext;
@@ -9,7 +8,6 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.OrganizationModel;
 import org.keycloak.models.ProtocolMapperModel;
 import org.keycloak.models.UserSessionModel;
-import org.keycloak.protocol.oidc.OIDCLoginProtocol;
 import org.keycloak.provider.ProviderConfigProperty;
 import org.keycloak.rar.AuthorizationRequestContext;
 import org.keycloak.representations.AccessTokenResponse;
@@ -27,7 +25,7 @@ public class OIDCScopeOrganizationProtocolMapper extends AbstractOIDCProtocolMap
     private static final String ALIAS = "kc.org.alias";
     private static final String SCOPE = "scope";
 
-    public static final String PROVIDER_ID = "oidc-scope-group-protocol-mapper";
+    public static final String PROVIDER_ID = "oidc-scope-organization-protocol-mapper";
 
     static {
         OIDCAttributeMapperHelper.addTokenClaimNameConfig(configProperties);
@@ -47,7 +45,7 @@ public class OIDCScopeOrganizationProtocolMapper extends AbstractOIDCProtocolMap
         scopeProperty.setType(ProviderConfigProperty.STRING_TYPE);
         scopeProperty.setDefaultValue("organization");
         scopeProperty.setHelpText(
-                "Name of dynamic scope, which will be used to match the default organization. Defaults to 'organization'");
+                "Name of parameterized scope, which will be used to match the default organization. Defaults to 'organization'");
 
         configProperties.add(scopeProperty);
 
@@ -110,7 +108,7 @@ public class OIDCScopeOrganizationProtocolMapper extends AbstractOIDCProtocolMap
         String orgId = authorizationRequestContext.getAuthorizationDetailEntries()
                 .stream()
                 .filter(d -> d.getClientScope().getName().equals(scopeName))
-                .map(d -> d.getDynamicScopeParam())
+                .map(d -> d.getParameterizedScopeParam())
                 .findFirst().orElse(null);
         if (orgId != null) {
             OrganizationModel organization = keycloakSession.getProvider(OrganizationProvider.class).getById(orgId);
